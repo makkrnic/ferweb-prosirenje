@@ -13,3 +13,4 @@
 var frame = document.getElementById ('window_div');
 frame.style.width = '100%';
 frame.style.maxWidth = '100%';
+$('[id^=calevent_][id$=_calendar]').fullCalendar('render')
