@@ -2,12 +2,12 @@
 header ('Content-type: application/json');
 
 $data = array (
-  'version'   => 0.03
+  'version'   => 0.031
 );
 
 $base = 'ferwebProsirenje';
 $extension = '.user.js';
-$siteUrl = 'http://fly.srk.fer.hr/~mak/gm/fwProsirenje/';
+$siteUrl = 'http://fly.srk.fer.hr/~mak/gm/fwProsirenje/index.php?download=';
 
 //echo 'lala'
 
