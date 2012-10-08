@@ -30,24 +30,16 @@ $().ready (function () {
         
         var c = $('script');
         
-        if (c[17].text.match(pattern)) {
-            console.log ('da');
-            var ab = c[16].text;
-    
-            return ab;
-        }
-        else {
-            console.log ('mozda');
-            var sadrzajSkripte;
-            
-            c.each (function () {
-                if (($(this).text().match(pattern))) {
-                    console.log ('pogodak');
-                    sadrzajSkripte = $(this).text();
-                }
-            });
-            return sadrzajSkripte;
-        }
+        console.log ('mozda');
+        var sadrzajSkripte;
+        
+        c.each (function () {
+            if (($(this).text().match(pattern))) {
+                console.log ('pogodak');
+                sadrzajSkripte = $(this).text();
+            }
+        });
+        return sadrzajSkripte;
     }
     
     var skripta = pogodak();
@@ -88,22 +80,15 @@ $().ready (function () {
 
     var c = $('script');
     
-    if (c[17].text.match(pattern)) {
-        console.log ('da');
-        var sources = c[16].text;
+    console.log ('mozda');
+    var sources;
     
-    }
-    else {
-        console.log ('mozda');
-        var sources;
-        
-        c.each (function () {
-            if (($(this).text().match(pattern))) {
-                console.log ('pogodak');
-                sources = $(this).text().match (pattern)[1]
-            }
-        });
-    }
+    c.each (function () {
+        if (($(this).text().match(pattern))) {
+            console.log ('pogodak');
+            sources = $(this).text().match (pattern)[1]
+        }
+    });
     
     return eval (sources);
   }
@@ -112,6 +97,7 @@ $().ready (function () {
 
   var skripta_orig = function () {
     var event_sources = get_event_sources();
+    console.log (event_sources);
     
 		var tmouts=[null, null];
 		calOptions=$.extend(
