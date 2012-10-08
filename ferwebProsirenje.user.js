@@ -19,7 +19,7 @@ console.log ('loading prosirenje');
 
 function jQuery_main () {
 $().ready (function () {
-  var version = 0.03;
+  var version = 0.1;
   var calElem = $('[id^=calevent_][id$=_calendar]');
   var calName = '#' + calElem.attr ('id');
 
@@ -158,6 +158,15 @@ $().ready (function () {
           var patternDvorana = /\[([^\]]*)/;
           var dvorana =  event.title.match(patternDvorana)[1];
           displayRoom(dvorana);
+        },
+
+        eventRender: function (event, element, view) {
+          //console.log (event);
+          var curTime = new Date ();
+          if (curTime > event.start && curTime < event.end) {
+            element.find('.fc-event-time').append (" - <span style='color: red'><b>u tijeku</b></span>");
+
+          }
         }
       },
 			fullCalendarDefaultOptions
@@ -248,6 +257,12 @@ $().ready (function () {
   $('body').dblclick (function () {
     hideAllRooms();
   })
+
+  $(document).keyup (function (e) {
+    if (e.keyCode == 27) {
+      hideAllRooms ();
+    }
+  });
   
   
   updateCheck ();
