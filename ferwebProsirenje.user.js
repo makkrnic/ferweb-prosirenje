@@ -19,7 +19,7 @@ console.log ('loading prosirenje');
 
 function jQuery_main () {
 $().ready (function () {
-  var version = 0.1;
+  var version = 0.11;
   var calElem = $('[id^=calevent_][id$=_calendar]');
   var calName = '#' + calElem.attr ('id');
 
@@ -149,6 +149,25 @@ $().ready (function () {
         eventRender: function (event, element, view) {
           //console.log (event);
           var curTime = new Date ();
+          
+          var colorPredavanje = '#0000FF';
+          var colorLabos = '#007700';
+          var colorAuditorne = '#0077FF';
+
+          if (event.title.indexOf ('edavanje') != -1) {
+            //event['color'] = '#AAAAFF';
+            element.addClass('event_predavanje');
+            element.find ('.fc-event-inner').css ({'background-color': colorPredavanje});
+          }
+          else if (event.title.indexOf ('aboratorijsk') != -1) {
+            element.addClass ('event_labos');
+            element.find('.fc-event-inner').css ({'background-color': colorLabos});
+          }
+          else if (event.title.indexOf ('uditorn') != -1) {
+            element.addClass ('event_auditorne');
+            element.find ('.fc-event-inner').css({'background-color': colorAuditorne});
+          }
+
           if (curTime > event.start && curTime < event.end) {
             element.find('.fc-event-time').append (" - <span style='color: red'><b>u tijeku</b></span>");
 
