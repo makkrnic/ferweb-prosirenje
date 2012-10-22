@@ -8,7 +8,6 @@
 // @run-at        document-end
 // ==/UserScript==
 
-
 //alert ('Using ferwebProsirenje.');
 
 console.log ('loading prosirenje');
@@ -24,15 +23,15 @@ $().ready (function () {
   var calName = '#' + calElem.attr ('id');
 
   var imenujSkriptu_orig = function () {
-    
+
     var pogodak = function () {
         var pattern = /_calendar'\).fullCalendar\(calOptions\);/
-        
+
         var c = $('script');
-        
+
         console.log ('mozda');
         var sadrzajSkripte;
-        
+
         c.each (function () {
             if (($(this).text().match(pattern))) {
                 console.log ('pogodak');
@@ -41,15 +40,15 @@ $().ready (function () {
         });
         return sadrzajSkripte;
     }
-    
+
     var skripta = pogodak();
-    
-    
+
+
     var pattern_jqClear = /\s*(\$)(\()/;
-    
+
     console.log (skripta.match (pattern_jqClear));
     var skriptaEdited1 = skripta.replace (pattern_jqClear, "$2");
-   
+
 
     var clickevent = ' eventClick: function (event, jsEv, view) {'+
     "\n//    alert (event.title);"+
@@ -59,15 +58,15 @@ $().ready (function () {
 //    " displayRoom(dvorana); "+
 
     "\n },";
-    
+
     var pattern_mouseEvents = /(eventMouseover:)/
     console.log (skriptaEdited1.match(pattern_mouseEvents));
     skriptaEdited2 = skriptaEdited1.replace (pattern_mouseEvents, clickevent + " $1");
 
 
-    
+
     var skripta_origTmp = 'var skripta_orig = ' + skriptaEdited2;
-    
+
     skripta4 = document.createElement ('script');
     skripta4.type = 'text/javascript';
     skripta4.innerHTML = skripta_origTmp;
@@ -79,17 +78,17 @@ $().ready (function () {
     var pattern = /event_sources\w*=\w*(\[[^\];]*\][^\]]*\])/;
 
     var c = $('script');
-    
+
     console.log ('mozda');
     var sources;
-    
+
     c.each (function () {
         if (($(this).text().match(pattern))) {
             console.log ('pogodak');
             sources = $(this).text().match (pattern)[1]
         }
     });
-    
+
     return eval (sources);
   }
 
@@ -98,11 +97,11 @@ $().ready (function () {
   var skripta_orig = function () {
     var event_sources = get_event_sources();
     console.log (event_sources);
-    
+
 		var tmouts=[null, null];
 		calOptions=$.extend(
       true,
-      { 
+      {
 			  eventSources: event_sources,
 			  height:700,
 
@@ -148,26 +147,52 @@ $().ready (function () {
 
         eventRender: function (event, element, view) {
           //console.log (event);
-          var curTime = new Date ();
-          
-          var colorPredavanje = '#0000FF';
-          var colorLabos = '#007700';
-          var colorAuditorne = '#0077FF';
+          var curTime = new Date();
 
+		      var color = new Array('#3333DD', '#AAAAFF', '#338833', '#CA5000'); //border, predavanje, labosi, auditorne
+		      var id;
+		
           if (event.title.indexOf ('edavanje') != -1) {
-            //event['color'] = '#AAAAFF';
             element.addClass('event_predavanje');
-            element.find ('.fc-event-inner').css ({'background-color': colorPredavanje});
-          }
+			      id = 1;
+		      }
           else if (event.title.indexOf ('aboratorijsk') != -1) {
             element.addClass ('event_labos');
-            element.find('.fc-event-inner').css ({'background-color': colorLabos});
+            id = 2;
           }
           else if (event.title.indexOf ('uditorn') != -1) {
             element.addClass ('event_auditorne');
-            element.find ('.fc-event-inner').css({'background-color': colorAuditorne});
+            id = 3;
           }
 
+          // ---------------------
+          element.find ('.fc-event-inner').css ({'background-color': color[id], 'border-color': color[0]});
+          element.find ('.fc-event-head').css ({'background-color': color[0], 'border-color': color[0]});
+          element.find ('.fc-event-bg').css ({'opacity': 0});
+
+          var attr = element.attr('style');
+          var x = attr.indexOf('background-color:');
+          if (x == -1)
+            attr = attr + 'background-color: ' + color[id] + '; ';
+          else {
+            var y = attr.length - 1;
+            y = attr.indexOf(';', x);
+            attr = attr.substring(0, x) + 'background-color: ' + color[id] + '; ' + attr.substring(y);
+          }
+
+          x = attr.indexOf('border-color:');
+          if (x == -1)
+            attr = attr + 'border-color: ' + color[0] + '; ';
+          else {
+            var y = attr.length - 1;
+            y = attr.indexOf(';', x);
+            attr = attr.substring(0, x) + 'border-color: ' + color[0] + '; ' + attr.substring(y);
+          }
+
+          element.attr('style', attr);
+
+          // -------------------
+		
           if (curTime > event.start && curTime < event.end) {
             element.find('.fc-event-time').append (" - <span style='color: red'><b>u tijeku</b></span>");
 
@@ -198,12 +223,12 @@ $().ready (function () {
     frame.style.maxWidth = '100%';
     $('[id^=calevent_][id$=_calendar]').fullCalendar('render');
   }
-  
-  
+
+
   function writeUpdateMessage (newVersion) {
     var adminStrip = $('.admin_strip_left');
     adminStrip.css ({'color': 'white', 'font-size': '11px'});
-    
+
     var getUrl = 'http://fly.srk.fer.hr/~mak/gm/fwProsirenje/api.php?callback=?';
     $.getJSON (getUrl,
               {option: 'getlink', version: newVersion},
@@ -211,7 +236,7 @@ $().ready (function () {
                 adminStrip.html ("<a href='" + returnLink + "'>Postoji nova verzija (" + newVersion + ")</a>");
               });
   }
-  
+
   function updateCheck () {
     //alert ('update check');
     var getUrl = 'http://fly.srk.fer.hr/~mak/gm/fwProsirenje/api.php?callback=?';
@@ -233,18 +258,18 @@ $().ready (function () {
         'class': 'soba_mapa soba_mapa_' + soba,
         'src':   'http://www.fer.unizg.hr/lokacija/info.php?soba=' + soba
     });
-    
+
     sobaFrame.css ({position: 'fixed', top: '20px', right: '20px', width: '620px', height: '400px', 'z-index': '1000', 'overflow': 'hidden'});
     $('body').append (sobaFrame);
     //sobaFrame.show(1500);
   }
-  
+
   function hideRoom (soba) {
     var soba_o = $('.soba_' + soba + '_mapa');
     soba_o.hide(1500);
     soba_o.remove();
   }
-  
+
   function hideAllRooms () {
     $('.soba_mapa').each (function () {
       //$(this).hide (1500);
@@ -268,8 +293,8 @@ $().ready (function () {
       hideAllRooms ();
     }
   });
-  
-  
+
+
   updateCheck ();
 });
 }
