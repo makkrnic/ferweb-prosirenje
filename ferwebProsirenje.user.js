@@ -21,7 +21,7 @@ var cal;
 function jQuery_main () {
 $().ready (function () {
   cal = $('[id^=calevent_][id$=_calendar]');
-  var version = 0.11;
+  var version = 0.13;
   var calElem = $('[id^=calevent_][id$=_calendar]');
   var calName = '#' + calElem.attr ('id');
 
