@@ -3,8 +3,8 @@
 // @namespace     http://www.fer.unizg.hr/
 // @description   Izmjena za ferweb tako da prosiri stranicu s kalendarom na punu sirinu browsera kako bi kalendar bio pregledniji.
 //
-// @include *www.fer.hr/kalendar
-// @include *www.fer.unizg.hr/kalendar
+// @include *www.fer.hr*
+// @include *www.fer.unizg.hr*
 // @run-at        document-end
 // ==/UserScript==
 
@@ -13,71 +13,44 @@
 console.log ('loading prosirenje');
 
 
+function jQuery_main () {
+
+var version = 0.131;
+
+
+
+var pluginSettings = {
+  resize              : ['kalendar', 'other'],
+  calendarRecolor     : true
+}
 
 
 var calendarRerender;
-var cal;
+var calElem;
 
-function jQuery_main () {
+var pageUrl = document.URL;
+
+var pageTypes = [
+      'kalendar',
+      'other'
+      ];
+var page = null;
+
+if (pageUrl.indexOf('kalendar') != -1) {
+  page = 0;
+}
+else {
+  page = 1;
+}
+
+
 $().ready (function () {
-  cal = $('[id^=calevent_][id$=_calendar]');
-  var version = 0.13;
-  var calElem = $('[id^=calevent_][id$=_calendar]');
+
+  calElem = $('[id^=calevent_][id$=_calendar]');
   var calName = '#' + calElem.attr ('id');
 
-  // var imenujSkriptu_orig = function () {
-
-  //   var pogodak = function () {
-  //       var pattern = /_calendar'\).fullCalendar\(calOptions\);/
-
-  //       var c = $('script');
-
-  //       console.log ('mozda');
-  //       var sadrzajSkripte;
-
-  //       c.each (function () {
-  //           if (($(this).text().match(pattern))) {
-  //               console.log ('pogodak');
-  //               sadrzajSkripte = $(this).text();
-  //           }
-  //       });
-  //       return sadrzajSkripte;
-  //   }
-
-  //   var skripta = pogodak();
-
-
-  //   var pattern_jqClear = /\s*(\$)(\()/;
-
-  //   console.log (skripta.match (pattern_jqClear));
-  //   var skriptaEdited1 = skripta.replace (pattern_jqClear, "$2");
-
-
-  //   var clickevent = ' eventClick: function (event, jsEv, view) {'+
-  //   "\n//    alert (event.title);"+
-
-////     " var patternDvorana = /\[([^\]]*)/; " +
-////     " var dvorana =  event.title.match(patternDvorana)[1]; "+
-////     " displayRoom(dvorana); "+
-
-  //   "\n },";
-
-  //   var pattern_mouseEvents = /(eventMouseover:)/
-  //   console.log (skriptaEdited1.match(pattern_mouseEvents));
-  //   skriptaEdited2 = skriptaEdited1.replace (pattern_mouseEvents, clickevent + " $1");
-
-
-
-  //   var skripta_origTmp = 'var skripta_orig = ' + skriptaEdited2;
-
-  //   skripta4 = document.createElement ('script');
-  //   skripta4.type = 'text/javascript';
-  //   skripta4.innerHTML = skripta_origTmp;
-  //   $('body').append (skripta4);
-  // }
 
   var get_event_sources = function () {
-
     var pattern = /event_sources\w*=\w*(\[[^\];]*\][^\]]*\])/;
 
     var c = $('script');
@@ -123,7 +96,7 @@ $().ready (function () {
 			  	var left = p.left+$(this).width()+8;
 
 			  	
-			  	
+
 			  	var _css={ left: (left), top: p.top};
 			  	tmouts[0]=setTimeout(function(){
 			  	    $(calName + '_balloon')
@@ -173,10 +146,12 @@ $().ready (function () {
           }
 
           // ---------------------
-          element.find ('.fc-event-inner').css ({'background-color': color[id], 'border-color': color['border']});
-          element.find ('.fc-event-head').css ({'background-color': color['border'], 'border-color': color['border']});
-          element.find ('.fc-event-bg').css ({'opacity': 0});
-          //console.log (element);
+
+          if (pluginSettings.calendarRecolor) {
+            element.find ('.fc-event-inner').css ({'background-color': color[id], 'border-color': color['border']});
+            element.find ('.fc-event-head').css ({'background-color': color['border'], 'border-color': color['border']});
+            element.find ('.fc-event-bg').css ({'opacity': 0});
+          }
 
           /*
           var attr = element.attr('style');
@@ -232,17 +207,14 @@ $().ready (function () {
   }
 
 
-  var expandCalendar = function () {
+  var expandPage = function () {
     var frame = document.getElementById ('window_div');
     frame.style.width = '100%';
     frame.style.maxWidth = '100%';
-    calendarRerender ();
   }
 
   calendarRerender = function () {
-    //cal = $('[id^=calevent_][id$=_calendar]');
-    //console.log (cal);
-    cal.fullCalendar('render');
+    calElem.fullCalendar('render');
   }
 
   function writeUpdateMessage (newVersion) {
@@ -301,16 +273,20 @@ $().ready (function () {
     $('.tdlijevistupac').toggle ();
   }
 
-  expandCalendar ();
-  //imenujSkriptu_orig();
 
-  calElem.text ('');
-  skripta_orig();
+  if (pluginSettings.resize.indexOf(pageTypes[page]) != -1) {
+    expandPage();
+  }
 
+  if (page == 0) {
+    calElem.text ('');
+    skripta_orig();
+    calendarRerender();
+  }
 
   $('body').dblclick (function () {
     hideAllRooms();
-  })
+  });
 
   $(document).keyup (function (e) {
     if (e.keyCode == 27) {
@@ -331,24 +307,32 @@ $().ready (function () {
   $('.hidemenu_link').on ('click', function (e) {
     e.preventDefault();
     leftMenuToggle();
-    calendarRerender ();
+
+    if (page == 0) {
+      calendarRerender ();
+    }
   });
 
   updateCheck ();
 });
 }
 
-var jQuery = document.createElement("script"),
-    inject = document.createElement("script");
+if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
+  var jQuery = document.createElement("script"),
+      inject = document.createElement("script");
 
-jQuery.setAttribute("type", "text/javascript");
-jQuery.setAttribute("src", "http://code.jquery.com/jquery-latest.js");
+  jQuery.setAttribute("type", "text/javascript");
+  jQuery.setAttribute("src", "http://code.jquery.com/jquery-latest.js");
 
-inject.setAttribute("type", "text/javascript");
-inject.appendChild(document.createTextNode("(" + jQuery_main + ")()"));
+  inject.setAttribute("type", "text/javascript");
+  inject.appendChild(document.createTextNode("(" + jQuery_main + ")()"));
 
-document.body.appendChild(jQuery);
-document.body.appendChild(inject);
+  document.body.appendChild(jQuery);
+  document.body.appendChild(inject);
+}
+else {
+  jQuery_main();
+}
 
 
 
