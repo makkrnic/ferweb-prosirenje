@@ -15,63 +15,66 @@ console.log ('loading prosirenje');
 
 
 
+var calendarRerender;
+var cal;
 
 function jQuery_main () {
 $().ready (function () {
+  cal = $('[id^=calevent_][id$=_calendar]');
   var version = 0.11;
   var calElem = $('[id^=calevent_][id$=_calendar]');
   var calName = '#' + calElem.attr ('id');
 
-  var imenujSkriptu_orig = function () {
+  // var imenujSkriptu_orig = function () {
 
-    var pogodak = function () {
-        var pattern = /_calendar'\).fullCalendar\(calOptions\);/
+  //   var pogodak = function () {
+  //       var pattern = /_calendar'\).fullCalendar\(calOptions\);/
 
-        var c = $('script');
+  //       var c = $('script');
 
-        console.log ('mozda');
-        var sadrzajSkripte;
+  //       console.log ('mozda');
+  //       var sadrzajSkripte;
 
-        c.each (function () {
-            if (($(this).text().match(pattern))) {
-                console.log ('pogodak');
-                sadrzajSkripte = $(this).text();
-            }
-        });
-        return sadrzajSkripte;
-    }
+  //       c.each (function () {
+  //           if (($(this).text().match(pattern))) {
+  //               console.log ('pogodak');
+  //               sadrzajSkripte = $(this).text();
+  //           }
+  //       });
+  //       return sadrzajSkripte;
+  //   }
 
-    var skripta = pogodak();
-
-
-    var pattern_jqClear = /\s*(\$)(\()/;
-
-    console.log (skripta.match (pattern_jqClear));
-    var skriptaEdited1 = skripta.replace (pattern_jqClear, "$2");
+  //   var skripta = pogodak();
 
 
-    var clickevent = ' eventClick: function (event, jsEv, view) {'+
-    "\n//    alert (event.title);"+
+  //   var pattern_jqClear = /\s*(\$)(\()/;
 
-//    " var patternDvorana = /\[([^\]]*)/; " +
-//    " var dvorana =  event.title.match(patternDvorana)[1]; "+
-//    " displayRoom(dvorana); "+
-
-    "\n },";
-
-    var pattern_mouseEvents = /(eventMouseover:)/
-    console.log (skriptaEdited1.match(pattern_mouseEvents));
-    skriptaEdited2 = skriptaEdited1.replace (pattern_mouseEvents, clickevent + " $1");
+  //   console.log (skripta.match (pattern_jqClear));
+  //   var skriptaEdited1 = skripta.replace (pattern_jqClear, "$2");
 
 
+  //   var clickevent = ' eventClick: function (event, jsEv, view) {'+
+  //   "\n//    alert (event.title);"+
 
-    var skripta_origTmp = 'var skripta_orig = ' + skriptaEdited2;
+////     " var patternDvorana = /\[([^\]]*)/; " +
+////     " var dvorana =  event.title.match(patternDvorana)[1]; "+
+////     " displayRoom(dvorana); "+
 
-    skripta4 = document.createElement ('script');
-    skripta4.type = 'text/javascript';
-    skripta4.innerHTML = skripta_origTmp;
-    $('body').append (skripta4);
-  }
+  //   "\n },";
+
+  //   var pattern_mouseEvents = /(eventMouseover:)/
+  //   console.log (skriptaEdited1.match(pattern_mouseEvents));
+  //   skriptaEdited2 = skriptaEdited1.replace (pattern_mouseEvents, clickevent + " $1");
+
+
+
+  //   var skripta_origTmp = 'var skripta_orig = ' + skriptaEdited2;
+
+  //   skripta4 = document.createElement ('script');
+  //   skripta4.type = 'text/javascript';
+  //   skripta4.innerHTML = skripta_origTmp;
+  //   $('body').append (skripta4);
+  // }
 
   var get_event_sources = function () {
 
@@ -79,12 +82,12 @@ $().ready (function () {
 
     var c = $('script');
 
-    console.log ('mozda');
+    //console.log ('mozda');
     var sources;
 
     c.each (function () {
         if (($(this).text().match(pattern))) {
-            console.log ('pogodak');
+            //console.log ('pogodak');
             sources = $(this).text().match (pattern)[1]
         }
     });
@@ -96,7 +99,7 @@ $().ready (function () {
 
   var skripta_orig = function () {
     var event_sources = get_event_sources();
-    console.log (event_sources);
+    //console.log (event_sources);
 
 		var tmouts=[null, null];
 		calOptions=$.extend(
@@ -149,47 +152,57 @@ $().ready (function () {
           //console.log (event);
           var curTime = new Date();
 
-		      var color = new Array('#3333DD', '#AAAAFF', '#338833', '#CA5000'); //border, predavanje, labosi, auditorne
+		      var color = {
+                'border': '#3333DD',
+                'predavanje': '#AAAAFF',
+                'labos': '#338833',
+                'auditorne': '#CA5000'}; //border, predavanje, labosi, auditorne
 		      var id;
 		
           if (event.title.indexOf ('edavanje') != -1) {
             element.addClass('event_predavanje');
-			      id = 1;
+			      id = 'predavanje';
 		      }
           else if (event.title.indexOf ('aboratorijsk') != -1) {
             element.addClass ('event_labos');
-            id = 2;
+            id = 'labos';
           }
           else if (event.title.indexOf ('uditorn') != -1) {
             element.addClass ('event_auditorne');
-            id = 3;
+            id = 'auditorne';
           }
 
           // ---------------------
-          element.find ('.fc-event-inner').css ({'background-color': color[id], 'border-color': color[0]});
-          element.find ('.fc-event-head').css ({'background-color': color[0], 'border-color': color[0]});
+          element.find ('.fc-event-inner').css ({'background-color': color[id], 'border-color': color['border']});
+          element.find ('.fc-event-head').css ({'background-color': color['border'], 'border-color': color['border']});
           element.find ('.fc-event-bg').css ({'opacity': 0});
+          //console.log (element);
 
+          /*
           var attr = element.attr('style');
           var x = attr.indexOf('background-color:');
-          if (x == -1)
-            attr = attr + 'background-color: ' + color[id] + '; ';
+          if (x == -1) {
+            //attr = attr + 'background-color: ' + color[id] + '; ';
+          }
           else {
+
             var y = attr.length - 1;
             y = attr.indexOf(';', x);
             attr = attr.substring(0, x) + 'background-color: ' + color[id] + '; ' + attr.substring(y);
           }
 
           x = attr.indexOf('border-color:');
-          if (x == -1)
-            attr = attr + 'border-color: ' + color[0] + '; ';
+          if (x == -1) {
+            //attr = attr + 'border-color: ' + color['border'] + '; ';
+          }
           else {
             var y = attr.length - 1;
             y = attr.indexOf(';', x);
-            attr = attr.substring(0, x) + 'border-color: ' + color[0] + '; ' + attr.substring(y);
+            attr = attr.substring(0, x) + 'border-color: ' + color['border'] + '; ' + attr.substring(y);
           }
 
           element.attr('style', attr);
+          // */
 
           // -------------------
 		
@@ -214,16 +227,23 @@ $().ready (function () {
 				$(this).hide();
 			}
 	  );
+
+    //console.log ($(calName));
   }
 
 
-  function expandCalendar () {
+  var expandCalendar = function () {
     var frame = document.getElementById ('window_div');
     frame.style.width = '100%';
     frame.style.maxWidth = '100%';
-    $('[id^=calevent_][id$=_calendar]').fullCalendar('render');
+    calendarRerender ();
   }
 
+  calendarRerender = function () {
+    //cal = $('[id^=calevent_][id$=_calendar]');
+    //console.log (cal);
+    cal.fullCalendar('render');
+  }
 
   function writeUpdateMessage (newVersion) {
     var adminStrip = $('.admin_strip_left');
@@ -277,6 +297,10 @@ $().ready (function () {
     })
   }
 
+  function leftMenuToggle  () {
+    $('.tdlijevistupac').toggle ();
+  }
+
   expandCalendar ();
   //imenujSkriptu_orig();
 
@@ -294,6 +318,21 @@ $().ready (function () {
     }
   });
 
+  // Dodaje link za skrivanje/prikazivanje lijevog izbornika
+  var navBoxUpper = $('.subheaderbox').find('tr');
+  var hideMenuLink = $('<td/>', {
+        'class': 'lokacijabox lokacijaboxLink'}).append ($('<a/>', {
+          'href': '#',
+          'class': 'hidemenu_link'}).append ('Sakrij/prikazi lijevi izbornik')).css ({'width': '150px'});
+
+  navBoxUpper.prepend (hideMenuLink);
+
+
+  $('.hidemenu_link').on ('click', function (e) {
+    e.preventDefault();
+    leftMenuToggle();
+    calendarRerender ();
+  });
 
   updateCheck ();
 });
