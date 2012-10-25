@@ -12,17 +12,45 @@
 
 console.log ('loading prosirenje');
 
-
 function jQuery_main () {
-
 var version = 0.131;
 
 
 
-var pluginSettings = {
-  resize              : ['kalendar', 'other'],
-  calendarRecolor     : true
+var GM_getValue;
+var GM_setValue;
+var GM_deleteValue;
+
+// workaround
+if (!this.GM_getValue || (this.GM_getValue.toString && this.GM_getValue.toString().indexOf("not supported")>-1)) {
+    GM_getValue=function (key,def) {
+        return localStorage[key] || def;
+    };
+    GM_setValue=function (key,value) {
+        return localStorage[key]=value;
+    };
+    GM_deleteValue=function (key) {
+        return delete localStorage[key];
+    };
 }
+
+
+
+
+var pluginSettings;
+var recolor = JSON.parse (GM_getValue ('calendarRecolor', 'true'));
+var resizePages = JSON.parse (GM_getValue ('resizePages', '["kalendar"]'))
+
+
+// inicijalizacija postavki
+pluginSettings = {
+  resize              : resizePages,
+  calendarRecolor     : recolor
+}
+
+
+console.log (pluginSettings);
+
 
 
 var calendarRerender;
@@ -42,6 +70,8 @@ if (pageUrl.indexOf('kalendar') != -1) {
 else {
   page = 1;
 }
+
+
 
 
 $().ready (function () {
@@ -273,6 +303,10 @@ $().ready (function () {
     $('.tdlijevistupac').toggle ();
   }
 
+  function settingsMenuToggle () {
+    $('#settingsMenu').toggle(200);
+  }
+
 
   if (pluginSettings.resize.indexOf(pageTypes[page]) != -1) {
     expandPage();
@@ -313,26 +347,35 @@ $().ready (function () {
     }
   });
 
+  
+  // Dodaje "link" za postavke
+  var settingsMenuLink = $('<a/>', {
+        'class' : 'gornjilinkoviboxLink',
+        'id'    : 'settingsMenuLink',
+        'href'  : '#'}).append ('FerWeb prosirenje postavke');
+  navBoxUpper.find ('td:last').prepend (settingsMenuLink);
+  $('#settingsMenuLink').on ('click', function (e) {
+    e.preventDefault();
+    settingsMenuToggle();
+  });
+
   updateCheck ();
 });
-}
+};
 
-if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
-  var jQuery = document.createElement("script"),
-      inject = document.createElement("script");
 
-  jQuery.setAttribute("type", "text/javascript");
-  jQuery.setAttribute("src", "http://code.jquery.com/jquery-latest.js");
+var jQuery = document.createElement("script"),
+    inject = document.createElement("script");
 
-  inject.setAttribute("type", "text/javascript");
-  inject.appendChild(document.createTextNode("(" + jQuery_main + ")()"));
+jQuery.setAttribute("type", "text/javascript");
+jQuery.setAttribute("src", "http://code.jquery.com/jquery-latest.js");
 
-  document.body.appendChild(jQuery);
-  document.body.appendChild(inject);
-}
-else {
-  jQuery_main();
-}
+inject.setAttribute("type", "text/javascript");
+inject.appendChild(document.createTextNode("(" + jQuery_main + ")()"));
+
+document.body.appendChild(jQuery);
+document.body.appendChild(inject);
+
 
 
 
