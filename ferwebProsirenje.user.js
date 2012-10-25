@@ -49,7 +49,7 @@ pluginSettings = {
 }
 
 
-console.log (pluginSettings);
+//console.log (pluginSettings);
 
 
 
@@ -73,6 +73,39 @@ else {
 
 
 
+var settingsMenu = $('<div/>', {
+      'id'    : 'settingsMenu'
+    }).css ({
+        'background-color'  : '#FFFFFF',
+        'z-index'           : '1100',
+        'position'          : 'fixed',
+        'top'               : '10px',
+        'left'              : '10px',
+        'display'           : 'none'}).append (
+        " <table class='settingsTable'>" +
+        "   <tr><td><input type='checkbox' id='chk_calendarRecolor' class='settings_chk'></td><td><label for='chk_calendarRecolor'>Obojaj kalendar Ferko bojama</label></td></tr>" +
+        "   <tr><td><input type='checkbox' id='chk_resizeAllPages' class='settings_chk'></td><td><label for='chk_resizeAllPages'>Prosiri sve stranice/samo kalendar</label></td></tr>" +
+        " </table>"
+        );
+$('body').append(settingsMenu);
+
+
+
+function setChkBoxState (chkBox, state) {
+//console.log (chkBox);
+  if ((state && !chkBox.is(':checked')) || (!state && chkBox.is(':checked'))) {
+    chkBox.click();
+  }
+}
+
+
+// postavljanje checkboxova u postavkama
+function initSettingsMenu () {
+  setChkBoxState ($('#chk_calendarRecolor'), pluginSettings.calendarRecolor);
+  setChkBoxState ($('#chk_resizeAllPages'), pluginSettings.resize.length != 1);
+}
+
+initSettingsMenu();
 
 $().ready (function () {
 
@@ -305,6 +338,7 @@ $().ready (function () {
 
   function settingsMenuToggle () {
     $('#settingsMenu').toggle(200);
+    //setTimeout(function () {initSettingsMenu();}, 250);
   }
 
 
@@ -357,6 +391,25 @@ $().ready (function () {
   $('#settingsMenuLink').on ('click', function (e) {
     e.preventDefault();
     settingsMenuToggle();
+  });
+
+  $('.settings_chk').each (function () {
+    $(this).change (function () {
+      switch ($(this).attr ('id')) {
+        case 'chk_calendarRecolor':
+          GM_setValue ('calendarRecolor', JSON.stringify ($(this).is(':checked')));
+        break;
+
+        case 'chk_resizeAllPages':
+          if ($(this).is(':checked')) {
+            GM_setValue ('resizePages', JSON.stringify (['kalendar', 'other']));
+          }
+          else {
+            GM_setValue ('resizePages', JSON.stringify (['kalendar']));
+          }
+        break;
+      }
+    });
   });
 
   updateCheck ();
