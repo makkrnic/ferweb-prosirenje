@@ -5,6 +5,7 @@
 //
 // @include *www.fer.hr*
 // @include *www.fer.unizg.hr*
+// @exclude *kalendar/predmeti*
 // @run-at        document-end
 // ==/UserScript==
 
@@ -13,7 +14,7 @@
 console.log ('loading prosirenje');
 
 function jQuery_main () {
-var version = 0.14;
+var version = 0.141;
 
 
 
@@ -64,7 +65,7 @@ var pageTypes = [
       ];
 var page = null;
 
-if (pageUrl.indexOf('kalendar') != -1) {
+if (pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('predmeti') == -1) {
   page = 0;
 }
 else {
@@ -341,12 +342,12 @@ $().ready (function () {
     //setTimeout(function () {initSettingsMenu();}, 250);
   }
 
-
-  if (pluginSettings.resize.indexOf(pageTypes[page]) != -1) {
+  if (pluginSettings.resize.indexOf(pageTypes[page]) != -1 && pageUrl.indexOf ('predmeti') == -1) {
     expandPage();
   }
 
-  if (page == 0) {
+  if (page == 0 && pageUrl.indexOf ('predmeti') == -1) {
+  console.log ('test1');
     calElem.text ('');
     skripta_orig();
     calendarRerender();
