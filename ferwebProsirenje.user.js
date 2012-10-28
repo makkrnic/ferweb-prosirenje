@@ -65,7 +65,7 @@ var pageTypes = [
       ];
 var page = null;
 
-if (pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('predmeti') == -1) {
+if (pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('kalendar/') == -1) {
   page = 0;
 }
 else {
@@ -217,31 +217,6 @@ $().ready (function () {
             element.find ('.fc-event-bg').css ({'opacity': 0});
           }
 
-          /*
-          var attr = element.attr('style');
-          var x = attr.indexOf('background-color:');
-          if (x == -1) {
-            //attr = attr + 'background-color: ' + color[id] + '; ';
-          }
-          else {
-
-            var y = attr.length - 1;
-            y = attr.indexOf(';', x);
-            attr = attr.substring(0, x) + 'background-color: ' + color[id] + '; ' + attr.substring(y);
-          }
-
-          x = attr.indexOf('border-color:');
-          if (x == -1) {
-            //attr = attr + 'border-color: ' + color['border'] + '; ';
-          }
-          else {
-            var y = attr.length - 1;
-            y = attr.indexOf(';', x);
-            attr = attr.substring(0, x) + 'border-color: ' + color['border'] + '; ' + attr.substring(y);
-          }
-
-          element.attr('style', attr);
-          // */
 
           // -------------------
 		
@@ -418,19 +393,32 @@ $().ready (function () {
 };
 
 
-var jQuery = document.createElement("script"),
-    inject = document.createElement("script");
+// var jQuery = document.createElement("script"),
+//     inject = document.createElement("script");
+// 
+// jQuery.setAttribute("type", "text/javascript");
+// jQuery.setAttribute("src", "http://code.jquery.com/jquery-latest.js");
+// 
+// inject.setAttribute("type", "text/javascript");
+// inject.appendChild(document.createTextNode("(" + jQuery_main + ")()"));
+// 
+// document.body.appendChild(jQuery);
+// document.body.appendChild(inject);
 
-jQuery.setAttribute("type", "text/javascript");
-jQuery.setAttribute("src", "http://code.jquery.com/jquery-latest.js");
 
-inject.setAttribute("type", "text/javascript");
-inject.appendChild(document.createTextNode("(" + jQuery_main + ")()"));
+function addJS_Node (text, s_URL, funcToRun) {
+    var D                                   = document;
+    var scriptNode                          = D.createElement ('script');
+    scriptNode.type                         = "text/javascript";
+    if (text)       scriptNode.textContent  = text;
+    if (s_URL)      scriptNode.src          = s_URL;
+    if (funcToRun)  scriptNode.textContent  = '(' + funcToRun.toString() + ')()';
 
-document.body.appendChild(jQuery);
-document.body.appendChild(inject);
+    var targ = D.getElementsByTagName ('head')[0] || D.body || D.documentElement;
+    targ.appendChild (scriptNode);
+}
 
-
+addJS_Node (null, null, jQuery_main);
 
 
 console.log ('done loading');
