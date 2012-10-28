@@ -2,7 +2,7 @@
 header ('Content-type: application/json');
 
 $data = array (
-  'version'   => 0.141
+  'version'   => 0.142
 );
 
 $base = 'ferwebProsirenje';
