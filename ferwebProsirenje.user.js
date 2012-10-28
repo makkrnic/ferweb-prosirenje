@@ -5,7 +5,6 @@
 //
 // @include *www.fer.hr*
 // @include *www.fer.unizg.hr*
-// @exclude *kalendar/predmeti*
 // @run-at        document-end
 // ==/UserScript==
 
@@ -67,7 +66,9 @@ var pageTypes = [
       ];
 var page = null;
 
-if (pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('kalendar/') == -1) {
+if ((pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('kalendar/') != -1) 
+    || (pageUrl.indexOf ('kalendar/predmeti') != -1)) {
+    console.log ('page 0');
   page = 0;
 }
 else {
@@ -117,7 +118,8 @@ $().ready (function () {
 
 
   var get_event_sources = function () {
-    var pattern = /event_sources\w*=\w*(\[[^\];]*\][^\]]*\])/;
+    //var pattern = /event_sources\w*=\w*(\[[^\];]*\][^\]]*\])/;
+    var pattern = /event_sources\w*=\w*([^;]*;)/;
 
     var c = $('script');
 
@@ -319,12 +321,12 @@ $().ready (function () {
     //setTimeout(function () {initSettingsMenu();}, 250);
   }
 
-  if (pluginSettings.resize.indexOf(pageTypes[page]) != -1 && pageUrl.indexOf ('predmeti') == -1) {
+  if (pluginSettings.resize.indexOf(pageTypes[page]) != -1) {
     expandPage();
   }
 
-  if (page == 0 && pageUrl.indexOf ('predmeti') == -1) {
-  console.log ('test1');
+  if (page == 0) {
+    //console.log ('test1');
     calElem.text ('');
     skripta_orig();
     calendarRerender();
