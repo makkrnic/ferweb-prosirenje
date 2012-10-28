@@ -41,12 +41,14 @@ if (!this.GM_getValue || (this.GM_getValue.toString && this.GM_getValue.toString
 var pluginSettings;
 var recolor = JSON.parse (GM_getValue ('calendarRecolor', 'true'));
 var resizePages = JSON.parse (GM_getValue ('resizePages', '["kalendar"]'))
+var hideMenu = JSON.parse (GM_getValue ('hideMenu', 'false'))
 
 
 // inicijalizacija postavki
 pluginSettings = {
-  resize              : resizePages,
-  calendarRecolor     : recolor
+  'resize'             : resizePages,
+  'calendarRecolor'    : recolor,
+  'hideMenu'           : hideMenu
 }
 
 
@@ -350,6 +352,8 @@ $().ready (function () {
 
   $('.hidemenu_link').on ('click', function (e) {
     e.preventDefault();
+    GM_setValue ('hideMenu', JSON.stringify ($('.tdlijevistupac').is(':visible')))
+    // console.log ($('.tdlijevistupac'))
     leftMenuToggle();
 
     if (page == 0) {
@@ -367,6 +371,7 @@ $().ready (function () {
   $('#settingsMenuLink').on ('click', function (e) {
     e.preventDefault();
     settingsMenuToggle();
+    //console.log ($(this))
   });
 
   $('.settings_chk').each (function () {
@@ -387,6 +392,10 @@ $().ready (function () {
       }
     });
   });
+
+  if (pluginSettings.hideMenu) {
+    leftMenuToggle();
+  }
 
   updateCheck ();
 });
