@@ -66,7 +66,7 @@ var pageTypes = [
       ];
 var page = null;
 
-if ((pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('kalendar/') != -1) 
+if ((pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('kalendar/') == -1) 
     || (pageUrl.indexOf ('kalendar/predmeti') != -1)) {
     console.log ('page 0');
   page = 0;
@@ -74,8 +74,6 @@ if ((pageUrl.indexOf('kalendar') != -1 && pageUrl.indexOf ('kalendar/') != -1)
 else {
   page = 1;
 }
-
-
 
 var settingsMenu = $('<div/>', {
       'id'    : 'settingsMenu'
