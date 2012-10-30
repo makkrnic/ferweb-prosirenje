@@ -395,6 +395,7 @@ $().ready (function () {
 
   if (pluginSettings.hideMenu) {
     leftMenuToggle();
+    calendarRerender ();
   }
 
   updateCheck ();
