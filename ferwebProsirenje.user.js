@@ -117,7 +117,8 @@ $().ready (function () {
 
   var get_event_sources = function () {
     //var pattern = /event_sources\w*=\w*(\[[^\];]*\][^\]]*\])/;
-    var pattern = /event_sources\w*=\w*([^;]*;)/;
+    //var pattern = /event_sources\w*=\w*([^(\];)]*\];)/;
+    var pattern = /event_sources\s*=\s*([\s\S]*)var tmouts/;
 
     var c = $('script');
 
@@ -125,11 +126,17 @@ $().ready (function () {
     var sources;
 
     c.each (function () {
+        console.log ($(this));
         if (($(this).text().match(pattern))) {
             //console.log ('pogodak');
-            sources = $(this).text().match (pattern)[1]
+            //sources_raw = sources_raw[1];
+
+            //console.log ($(this).text().match (pattern));
+            sources = $(this).text().match (pattern)[1];
+            //console.log (sources_raw);
         }
     });
+    //console.log (sources);
 
     return eval (sources);
   }
