@@ -13,7 +13,7 @@
 console.log ('loading prosirenje');
 
 function jQuery_main () {
-var version = 0.142;
+var version = 0.143;
 
 
 
